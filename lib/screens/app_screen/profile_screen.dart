@@ -1,3 +1,8 @@
+import 'package:city_guide/screens/app_screen/profiles_preferences/About.dart';
+import 'package:city_guide/screens/app_screen/profiles_preferences/Interest_preferences.dart';
+import 'package:city_guide/screens/app_screen/profiles_preferences/edit_profile.dart';
+import 'package:city_guide/screens/app_screen/profiles_preferences/help_support.dart';
+import 'package:city_guide/screens/app_screen/profiles_preferences/privacy_security.dart';
 import 'package:city_guide/screens/app_screen/saved_attraction.dart';
 import 'package:flutter/material.dart';
 
@@ -78,7 +83,14 @@ class ProfileScreen extends StatelessWidget {
                 _SettingsTile(
                   icon: Icons.lock_outline_rounded,
                   label: 'Privacy & Security',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PrivacySecurity(),
+                      ),
+                    );
+                  },
                   isLast: true,
                 ),
               ],
@@ -97,7 +109,14 @@ class ProfileScreen extends StatelessWidget {
                 _SettingsTile(
                   icon: Icons.tune_rounded,
                   label: 'Interest Preferences',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => InterestPreferences(),
+                      ),
+                    );
+                  },
                   isLast: true,
                 ),
               ],
@@ -110,7 +129,12 @@ class ProfileScreen extends StatelessWidget {
                 _SettingsTile(
                   icon: Icons.help_outline_rounded,
                   label: 'Help & Support',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => HelpSupport()),
+                    );
+                  },
                 ),
                 _SettingsTile(
                   icon: Icons.star_border_rounded,
@@ -120,7 +144,12 @@ class ProfileScreen extends StatelessWidget {
                 _SettingsTile(
                   icon: Icons.info_outline_rounded,
                   label: 'About',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => About()),
+                    );
+                  },
                   isLast: true,
                 ),
               ],
@@ -153,7 +182,6 @@ class ProfileScreen extends StatelessWidget {
     );
   }
 }
-
 
 class _ProfileHeader extends StatelessWidget {
   final String userName;
@@ -254,7 +282,12 @@ class _ProfileHeader extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           child: OutlinedButton(
-            onPressed: onEditProfile,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EditProfile()),
+              );
+            },
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: AppColors.primary, width: 1.4),
