@@ -1,0 +1,42 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "city-guide-c55ac",
+          "appId": "1:370508232603:android:727d129c1f4337722d933e",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "city-guide-c55ac",
+          "configurations": {
+            "android": "1:370508232603:android:727d129c1f4337722d933e",
+            "ios": "1:370508232603:ios:2ba33913ff608c6b2d933e",
+            "macos": "1:370508232603:ios:2ba33913ff608c6b2d933e",
+            "web": "1:370508232603:web:552771231d63521c2d933e",
+            "windows": "1:370508232603:web:27c6134e3ab366cd2d933e"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

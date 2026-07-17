@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "370508232603",
+    "project_id": "city-guide-c55ac",
+    "storage_bucket": "city-guide-c55ac.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:370508232603:android:727d129c1f4337722d933e",
+        "android_client_info": {
+          "package_name": "com.example.city_guide"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "370508232603-hcjt0u9gsb32310qgj9pnef5i2u709kn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.city_guide",
+            "certificate_hash": "31f7bc9d98d86d1a2d16c7fab27656c142367911"
+          }
+        },
+        {
+          "client_id": "370508232603-39nlhadndp0sbp8i7oqdnidar3aksltc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbcSb2OG_Ahr-1U_Q_9tQpW5Ss0Xk1A4w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "370508232603-39nlhadndp0sbp8i7oqdnidar3aksltc.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "370508232603-k2dd7jfg06alre58jme3tbk7bhq2e0n3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.cityGuide"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
