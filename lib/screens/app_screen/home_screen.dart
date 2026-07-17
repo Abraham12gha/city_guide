@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:city_guide/screens/app_screen/attraction_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../services/home_firestore.dart';
 import 'attraction_result_screen.dart';
 
@@ -85,6 +86,109 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (_) {
       return false;
     }
+  }
+
+  Widget skeletonCard() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 120,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Container(
+              height: 14,
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              color: Colors.white,
+            ),
+
+            const SizedBox(height: 8),
+
+            Container(
+              height: 12,
+              margin: const EdgeInsets.symmetric(horizontal: 10),
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
+  Widget citySkeletonCard() {
+    return Shimmer.fromColors(
+      baseColor: Colors.grey.shade300,
+      highlightColor: Colors.grey.shade100,
+      child: Container(
+        width: 220,
+        margin: const EdgeInsets.only(right: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Column(
+          children: [
+            Container(
+              height: 150,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            Container(
+              height: 14,
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              color: Colors.white,
+            ),
+
+            const SizedBox(height: 8),
+
+            Container(
+              height: 12,
+              margin: const EdgeInsets.symmetric(horizontal: 12),
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget skeletonGrid() {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: 6,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.72,
+      ),
+      itemBuilder: (_, __) => skeletonCard(),
+    );
   }
 
   Widget _buildGridView(List<QueryDocumentSnapshot> results) {
@@ -998,8 +1102,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 StreamBuilder<QuerySnapshot>(
                   stream: getAttractions(),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(child: CircularProgressIndicator());
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SizedBox(
+                        height: 260,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 4,
+                          itemBuilder: (_, __) => Container(
+                            width: 270,
+                            margin: const EdgeInsets.only(right: 12),
+                            child: skeletonCard(),
+                          ),
+                        ),
+                      );
                     }
 
                     final attractions = snapshot.data!.docs;
@@ -1288,9 +1403,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       .collection('cities')
                       .snapshots(),
                   builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return const Center(
-                        child: CircularProgressIndicator(),
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return SizedBox(
+                        height: 280,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: 4,
+                          itemBuilder: (_, __) => citySkeletonCard(),
+                        ),
                       );
                     }
 
@@ -1401,44 +1521,27 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: height * 0.01,),
 
 
-        StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('attractions')
-              .snapshots(),
+                StreamBuilder<QuerySnapshot>(
+                  stream: FirebaseFirestore.instance
+                      .collection('attractions')
+                      .snapshots(),
 
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const CircularProgressIndicator();
-              }
+                  builder: (context, snapshot) {
 
-              if (!isInitialized) {
-                allAttractions = List<QueryDocumentSnapshot>.from(
-                  snapshot.data!.docs,
-                );
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return skeletonGrid();
+                    }
 
-                allAttractions.shuffle();
+                    if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                      return const Center(
+                        child: Text("No attractions found"),
+                      );
+                    }
 
-                visibleAttractions =
-                    allAttractions.take(itemsToShow).toList();
+                    return _buildGridView(snapshot.data!.docs);
+                  },
+                ),
 
-                isInitialized = true;
-              }
-
-              return _buildGridView(visibleAttractions);
-            }
-
-
-        )
-
-                // TextButton(
-                //   onPressed: () {
-                //     Navigator.push(
-                //       context,
-                //       MaterialPageRoute(builder: (context) => AttractionDetail()),
-                //     );
-                //   },
-                //   child: Text("attraction detailed"),
-                // ),
               ],
             ),
           ),
