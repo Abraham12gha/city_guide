@@ -15,158 +15,160 @@ class mainScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Center(
-            child: Column(
-              children: [
-                SvgPicture.asset(
-                  'assets/images/welcome_screen.svg',
-                  width: width * 0.9,
-                  height: height * 0.4,
-                  fit: BoxFit.contain,
-                ),
-
-                Column(
-                  children: [
-                    Image.asset(
-                      "assets/images/logo_with_name-new.png",
-                      height: height * 0.15,
-                    ),
-
-                    Text(
-                      "Explore top attractions, local favorites, and unforgettable experiences that bring the city to life.",
-                      style: TextStyle(fontSize: 14),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-                //   signup and login button
-                SizedBox(height: height * 0.03),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    height: height * 0.056,
-                    width: width * 0.7,
-                    alignment: .center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      color: Color(0xFF14B8A6),
-                    ),
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 20,
-                        color: Colors.white,
-                      ),
-                    ),
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: Column(
+                children: [
+                  SvgPicture.asset(
+                    'assets/images/welcome_screen.svg',
+                    width: width * 0.9,
+                    height: height * 0.4,
+                    fit: BoxFit.contain,
                   ),
-                ),
-
-                SizedBox(height: 7),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SignupScreen(),
+        
+                  Column(
+                    children: [
+                      Image.asset(
+                        "assets/images/logo_with_name-new.png",
+                        height: height * 0.15,
                       ),
-                    );
-                  },
-                  child: Container(
-                    height: height * 0.056,
-                    width: width * 0.7,
-                    alignment: .center,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100),
-                      border: Border.all(color: Color(0xFF14B8A6), width: 2.0),
-                    ),
-                    child: Text(
-                      "Signup",
-                      style: TextStyle(
-                        fontWeight: FontWeight.w800,
-                        fontSize: 20,
-                        color: Colors.black,
+        
+                      Text(
+                        "Explore top attractions, local favorites, and unforgettable experiences that bring the city to life.",
+                        style: TextStyle(fontSize: 14),
+                        textAlign: TextAlign.center,
                       ),
-                    ),
+                    ],
                   ),
-                ),
-
-                SizedBox(height: height * 0.08),
-
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      child: Divider(
-                        color: Colors.grey,
-                        thickness: 0.5,
-                        indent: 60,
-                        endIndent: 5,
-                      ),
-                    ),
-                    Text(
-                      "or continue with",
-                      style: TextStyle(color: Colors.grey.shade500),
-                    ),
-                    Flexible(
-                      child: Divider(
-                        color: Colors.grey,
-                        thickness: 0.5,
-                        indent: 5,
-                        endIndent: 60,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: height * 0.018),
-
-                Row(
-                  mainAxisAlignment: .center,
-                  children: [
-                    Container(
+                  //   signup and login button
+                  SizedBox(height: height * 0.03),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: height * 0.056,
                       width: width * 0.7,
-                      child: Row(
-                        mainAxisAlignment: .spaceEvenly,
-                        children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () async {
-                                await Auth().signInWithGoogle();
-                              },
-                              child: SocialIcon(
-                                imagePath: "assets/images/google_logo-new.png",
-                                name: "Google",
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 10),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () async {
-                                await Auth().signInWithFacebook();
-                              },
-                              child: SocialIcon(
-                                imagePath: "assets/images/Facebook_logo-new.png",
-                                name: "Facebook",
-                              ),
-                            ),
-                          ),
-                        ],
+                      alignment: .center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        color: Color(0xFF14B8A6),
+                      ),
+                      child: Text(
+                        "Login",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+        
+                  SizedBox(height: 7),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const SignupScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      height: height * 0.056,
+                      width: width * 0.7,
+                      alignment: .center,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: Color(0xFF14B8A6), width: 2.0),
+                      ),
+                      child: Text(
+                        "Signup",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 20,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+        
+                  SizedBox(height: height * 0.08),
+        
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: Divider(
+                          color: Colors.grey,
+                          thickness: 0.5,
+                          indent: 60,
+                          endIndent: 5,
+                        ),
+                      ),
+                      Text(
+                        "or continue with",
+                        style: TextStyle(color: Colors.grey.shade500),
+                      ),
+                      Flexible(
+                        child: Divider(
+                          color: Colors.grey,
+                          thickness: 0.5,
+                          indent: 5,
+                          endIndent: 60,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: height * 0.018),
+        
+                  Row(
+                    mainAxisAlignment: .center,
+                    children: [
+                      Container(
+                        width: width * 0.7,
+                        child: Row(
+                          mainAxisAlignment: .spaceEvenly,
+                          children: [
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await Auth().signInWithGoogle();
+                                },
+                                child: SocialIcon(
+                                  imagePath: "assets/images/google_logo-new.png",
+                                  name: "Google",
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: GestureDetector(
+                                onTap: () async {
+                                  await Auth().signInWithFacebook();
+                                },
+                                child: SocialIcon(
+                                  imagePath: "assets/images/Facebook_logo-new.png",
+                                  name: "Facebook",
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
