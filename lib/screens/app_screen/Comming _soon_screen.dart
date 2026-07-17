@@ -26,7 +26,6 @@ class ComingSoonView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Illustration Area
             Stack(
               alignment: Alignment.center,
               children: [

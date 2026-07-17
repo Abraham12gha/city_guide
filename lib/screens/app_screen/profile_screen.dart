@@ -154,9 +154,6 @@ class ProfileScreen extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// HEADER: avatar + edit badge + name + "Traveller" tag + Edit Profile
-// ─────────────────────────────────────────────────────────────
 
 class _ProfileHeader extends StatelessWidget {
   final String userName;
@@ -284,10 +281,6 @@ class _ProfileHeader extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────
-// Small reusable pieces
-// ─────────────────────────────────────────────────────────────
-
 class _SectionLabel extends StatelessWidget {
   final String text;
   const _SectionLabel(this.text);
@@ -403,10 +396,6 @@ class _SettingsTile extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────
-// Logout — flat red text button with a confirmation dialog
-// ─────────────────────────────────────────────────────────────
 
 class _LogoutButton extends StatelessWidget {
   final VoidCallback? onConfirmedLogout;

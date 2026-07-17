@@ -2,8 +2,6 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:city_guide/screens/app_screen/attraction_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import '../../services/home_firestore.dart';
 import 'attraction_result_screen.dart';
 

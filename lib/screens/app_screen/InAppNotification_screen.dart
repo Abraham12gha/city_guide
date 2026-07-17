@@ -89,8 +89,6 @@ class NotificationScreen extends StatelessWidget {
       ),
     );
   }
-
-  // Splits notifications into Recent / Week Ago / Older based on createdAt.
   List<_NotificationSection> _groupByDate(
       List<NotificationModel> notifications) {
     final now = DateTime.now();
