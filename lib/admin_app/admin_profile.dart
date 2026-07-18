@@ -319,6 +319,7 @@ class _SettingsTile extends StatelessWidget {
 
 class _LogoutButton extends StatelessWidget {
   final VoidCallback? onConfirmedLogout;
+
   const _LogoutButton({this.onConfirmedLogout});
 
   @override
@@ -326,7 +327,9 @@ class _LogoutButton extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton.icon(
-        onPressed: () => _confirmLogout(context),
+        onPressed: () {
+          onConfirmedLogout?.call();
+        },
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.danger,
           side: const BorderSide(color: Color(0xFFF3D4D2), width: 1.4),
@@ -344,57 +347,58 @@ class _LogoutButton extends StatelessWidget {
     );
   }
 
-  void _confirmLogout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: const Text(
-          'Log out?',
-          style: TextStyle(fontWeight: FontWeight.w700),
-        ),
-        content: const Text(
-          'You\'ll need to sign in again to access your saved attractions and preferences.',
-          style: TextStyle(color: AppColors.textGrey, fontSize: 14),
-        ),
-        actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        actions: [
-          Expanded(
-            child: OutlinedButton(
-              onPressed: () => Navigator.pop(ctx),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.textDark,
-                side: const BorderSide(color: AppColors.divider),
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text('Cancel'),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: ElevatedButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                onConfirmedLogout?.call();
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.danger,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: const Text('Log Out'),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+//   void _confirmLogout(BuildContext context) {
+//     showDialog(
+//       context: context,
+//       builder: (ctx) => AlertDialog(
+//         backgroundColor: Colors.white,
+//         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+//         title: const Text(
+//           'Log out?',
+//           style: TextStyle(fontWeight: FontWeight.w700),
+//         ),
+//         content: const Text(
+//           'You\'ll need to sign in again to access your saved attractions and preferences.',
+//           style: TextStyle(color: AppColors.textGrey, fontSize: 14),
+//         ),
+//         actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+//         actions: [
+//           Expanded(
+//             child: OutlinedButton(
+//               onPressed: () => Navigator.pop(ctx),
+//               style: OutlinedButton.styleFrom(
+//                 foregroundColor: AppColors.textDark,
+//                 side: const BorderSide(color: AppColors.divider),
+//                 padding: const EdgeInsets.symmetric(vertical: 12),
+//                 shape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.circular(10),
+//                 ),
+//               ),
+//               child: const Text('Cancel'),
+//             ),
+//           ),
+//           const SizedBox(width: 10),
+//           Expanded(
+//             child: ElevatedButton(
+//               onPressed: () {
+//                 Navigator.pop(ctx);
+//                 onConfirmedLogout?.call();
+//               },
+//               style: ElevatedButton.styleFrom(
+//                 backgroundColor: AppColors.danger,
+//                 foregroundColor: Colors.white,
+//                 elevation: 0,
+//                 padding: const EdgeInsets.symmetric(vertical: 12),
+//                 shape: RoundedRectangleBorder(
+//                   borderRadius: BorderRadius.circular(10),
+//                 ),
+//               ),
+//               child: const Text('Log Out'),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 }
