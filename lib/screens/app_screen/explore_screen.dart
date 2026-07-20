@@ -147,16 +147,6 @@ final MapController mapController = MapController();
 
                               onDetails: () {
 
-                                // Navigator.pop(context);
-
-                                // Navigator.push(
-                                //   context,
-                                //   MaterialPageRoute(
-                                //     builder: (_) => AttractionDetail(
-                                //       attraction: attraction,
-                                //     ),
-                                //   ),
-                                // );
                               },
 
                               onDirections: () {

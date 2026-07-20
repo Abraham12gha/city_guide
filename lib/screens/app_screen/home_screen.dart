@@ -321,22 +321,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
 
-
-                            /// RATING
-                            // Row(
-                            //   children: [
-                            //     const Icon(
-                            //       Icons.star,
-                            //       size: 14,
-                            //       color: Colors.amber,
-                            //     ),
-                            //       Text(
-                            //         "${attraction['averageRating']} (${attraction['totalReviews']})",
-                            //         style: const TextStyle(fontSize: 12),
-                            //         overflow: TextOverflow.ellipsis,
-                            //       ),
-                            //   ],
-                            // ),
                             Expanded(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.end,
@@ -981,36 +965,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 SizedBox(height: height * 0.01),
 
-                // SizedBox(
-                //   height: 80,
-                //   child: ListView.builder(
-                //     shrinkWrap: true,
-                //     itemCount: 6,
-                //     scrollDirection: Axis.horizontal,
-                //     itemBuilder: (_, index) {
-                //       return Column(
-                //         children: [
-                //           Padding(
-                //             padding: const EdgeInsets.only(right: 10),
-                //             child: Container(
-                //               height: 56,
-                //               padding: const EdgeInsets.symmetric(
-                //                 horizontal: 12,
-                //                 vertical: 6,
-                //               ),
-                //               decoration: BoxDecoration(
-                //                 color: Colors.white,
-                //                 borderRadius: BorderRadius.circular(10),
-                //                 border: Border.all(color: Colors.grey.shade200),
-                //               ),
-                //               child: Center(child: Text("Mountains")),
-                //             ),
-                //           ),
-                //         ],
-                //       );
-                //     },
-                //   ),
-                // ),
                 SizedBox(
                   height: 60,
                   child: StreamBuilder<QuerySnapshot>(
@@ -1190,28 +1144,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           top: 10,
                                           right: 10,
                                           child: GestureDetector(
-                                            // onTap: () async {
-                                            //   if (favoriteIds.contains(
-                                            //     attraction.id,
-                                            //   )) {
-                                            //     await homeFirestore
-                                            //         .removeFromFavorites(
-                                            //           attraction.id,
-                                            //         );
-                                            //
-                                            //     setState(() {
-                                            //       favoriteIds.remove(attraction.id);
-                                            //     });
-                                            //   } else {
-                                            //     await homeFirestore.addToFavorites(
-                                            //       attraction.id,
-                                            //     );
-                                            //
-                                            //     setState(() {
-                                            //       favoriteIds.add(attraction.id);
-                                            //     });
-                                            //   }
-                                            // },
                                               onTap: () async {
                                                 final wasFavorite = favoriteIds.contains(attraction.id);
 
@@ -1274,39 +1206,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        // Row(
-                                        //   mainAxisAlignment:
-                                        //       MainAxisAlignment.spaceBetween,
-                                        //   children: [
-                                        //     Text(
-                                        //       attraction['name'],
-                                        //       maxLines: 1,
-                                        //       overflow: TextOverflow.ellipsis,
-                                        //       style: const TextStyle(
-                                        //         fontWeight: FontWeight.bold,
-                                        //         fontSize: 16,
-                                        //       ),
-                                        //     ),
-                                        //
-                                        //     const SizedBox(height: 6),
-                                        //
-                                        //     Row(
-                                        //       mainAxisAlignment:
-                                        //           MainAxisAlignment.spaceBetween,
-                                        //       children: [
-                                        //         const Icon(
-                                        //           Icons.star,
-                                        //           size: 16,
-                                        //           color: Colors.amber,
-                                        //         ),
-                                        //         const SizedBox(width: 4),
-                                        //         Text(
-                                        //           "${attraction['averageRating'].toString()} (${attraction['totalReviews'].toString()})",
-                                        //         ),
-                                        //       ],
-                                        //     ),
-                                        //   ],
-                                        // ),
+
 
                                         Row(
                                           children: [

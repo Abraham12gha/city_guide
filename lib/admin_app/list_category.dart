@@ -188,48 +188,6 @@ class CategoryCard extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.delete_outline, color: Colors.red),
                 onPressed: () async {
-                  // final confirm = await showDialog<bool>(
-                  //   context: context,
-                  //   builder: (context) {
-                  //     return AlertDialog(
-                  //       title: const Text("Delete Category"),
-                  //       content: Text(
-                  //         "Are you sure you want to delete '${category.name}'?",
-                  //       ),
-                  //       actions: [
-                  //         TextButton(
-                  //           onPressed: () {
-                  //             Navigator.pop(context, false);
-                  //           },
-                  //           child: const Text("Cancel"),
-                  //         ),
-                  //         ElevatedButton(
-                  //           style: ElevatedButton.styleFrom(
-                  //             backgroundColor: Colors.red,
-                  //             foregroundColor: Colors.white,
-                  //           ),
-                  //           onPressed: () {
-                  //             Navigator.pop(context, true);
-                  //           },
-                  //           child: const Text("Delete"),
-                  //         ),
-                  //       ],
-                  //     );
-                  //   },
-                  // );
-                  //
-                  // if (confirm == true) {
-                  //   await CategoryService().deleteCategory(
-                  //     category.id,
-                  //   );
-                  //
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     const SnackBar(
-                  //       content: Text("Category deleted successfully"),
-                  //     ),
-                  //   );
-                  // }
-
                   Future<bool?> showDeleteDialog(BuildContext context) {
                     return showDialog<bool>(
                       context: context,

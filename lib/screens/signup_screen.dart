@@ -40,7 +40,6 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _isLoading = false;
   bool _agreeTerms = false;
 
-  // input error variables
   String? _emailError;
   String? _passwordError;
   String? _confirmPasswordError;
@@ -413,18 +412,6 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                         ),
 
-                        // onPressed: () async {
-                        //
-                        //   try {
-                        //     final user = await _auth.signup(
-                        //       _emailController.text,
-                        //       _passwordController.text,
-                        //     );
-                        //     if (user != null) {
-                        //       SnackBar(content: Text("Account created successfully"),)
-                        //     }
-                        //   } catch (e) {}
-                        // },
                         onPressed: _isLoading
                             ? null
                             : () async {

@@ -223,30 +223,6 @@ class CityCard extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.delete_outline, color: Colors.red),
                   onPressed: () async {
-                    // final confirm = await showDialog<bool>(
-                    //   context: context,
-                    //   builder: (_) => AlertDialog(
-                    //     title: const Text("Delete City"),
-                    //     content: const Text(
-                    //       "Are you sure you want to delete this city?",
-                    //     ),
-                    //     actions: [
-                    //       TextButton(
-                    //         onPressed: () => Navigator.pop(context, false),
-                    //         child: const Text("Cancel"),
-                    //       ),
-                    //       ElevatedButton(
-                    //         onPressed: () => Navigator.pop(context, true),
-                    //         child: const Text("Delete"),
-                    //       ),
-                    //     ],
-                    //   ),
-                    // );
-                    //
-                    // if (confirm == true) {
-                    //   await CityService().deleteCity(city.id);
-                    // }
-
                     Future<bool?> showDeleteDialog(BuildContext context) {
                       return showDialog<bool>(
                         context: context,

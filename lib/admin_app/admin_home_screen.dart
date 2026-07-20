@@ -2,9 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
-// ============================================================
-// COLORS
-// ============================================================
 class AppColors {
   AppColors._();
 
@@ -231,9 +228,6 @@ class _StatCard extends StatelessWidget {
   }
 }
 
-// ============================================================
-// TRAFFIC / SIGNUPS CHART
-// ============================================================
 class _TrafficChart extends StatelessWidget {
   final List<int> dailyCounts; // 7 values, oldest -> newest
 

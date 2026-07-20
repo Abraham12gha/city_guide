@@ -419,39 +419,6 @@ class _AddAttractionsState extends State<AddAttractions> {
 
               SizedBox(height: height * 0.01),
 
-              // TextFormField(
-              //
-              //   decoration: InputDecoration(
-              //     labelText: "Category",
-              //     labelStyle: const TextStyle(
-              //       fontWeight: FontWeight.w700,
-              //     ),
-              //
-              //     border: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(8),
-              //       borderSide: BorderSide(
-              //         color: Colors.grey.shade300,
-              //         width: 1.5,
-              //       ),
-              //     ),
-              //
-              //     focusedBorder: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(10),
-              //       borderSide: const BorderSide(
-              //         color: Color(0xFFBDBDBD),
-              //         width: 2,
-              //       ),
-              //     ),
-              //
-              //     enabledBorder: OutlineInputBorder(
-              //       borderRadius: BorderRadius.circular(8),
-              //       borderSide: BorderSide(
-              //         color: Colors.grey.shade300,
-              //         width: 1.5,
-              //       ),
-              //     ),
-              //   ),
-              // ),
               StreamBuilder(
                 stream: FirebaseFirestore.instance
                     .collection('categories')

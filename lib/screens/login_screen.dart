@@ -50,12 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
               Column(
                 crossAxisAlignment: .start,
                 children: [
-                  // IconButton(
-                  //   onPressed: () {
-                  //     Navigator.of(context).pop();
-                  //   },
-                  //   icon: Icon(Icons.arrow_back),
-                  // ),
                   Image.asset(
                     "assets/images/logo-new.png",
                     height: height * 0.12,
@@ -179,12 +173,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         Row(
                           children: [
-                            // Checkbox(
-                            //   value: true,
-                            //   onChanged: (value) {},
-                            //   activeColor: const Color(0xFF14B8A6),
-                            //   checkColor: Colors.white,
-                            // ),
+
                             Checkbox(
                               value: _rememberMe,
                               onChanged: (value) {
@@ -227,48 +216,6 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                         ),
 
-                        // onPressed: () {
-                        //   Navigator.push(context, MaterialPageRoute(builder: (context)=>const MainScreen(),));
-                        //   },
-
-                        // onPressed: _isLoading ? null : () async {
-                        //
-                        //
-                        //   try{
-                        //
-                        //     setState(() {
-                        //       _isLoading = true;
-                        //     });
-                        //
-                        //
-                        //     final user = await _auth.login(
-                        //       _emailController.text.trim(),
-                        //       _passwordController.text,
-                        //     );
-                        //
-                        //
-                        //     if (user != null && mounted) {
-                        //       ScaffoldMessenger.of(context).showSnackBar(
-                        //         const SnackBar(
-                        //           content: Text("Login Successfully"),
-                        //           duration: Duration(seconds: 2),
-                        //         ),
-                        //       );
-                        //     }
-                        //
-                        //
-                        //   }catch(e){
-                        //     ScaffoldMessenger.of(context).showSnackBar(
-                        //       SnackBar(content: Text(e.toString())),
-                        //     );
-                        //   } finally {
-                        //     if(mounted){
-                        //       setState(() {
-                        //         _isLoading = false;
-                        //       });
-                        //     }
-                        //   }
-                        // },
                         onPressed: _isLoading
                             ? null
                             : () async {
@@ -317,27 +264,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     _passwordController.text,
                                   );
 
-                                  // if (result != null && mounted) {
-                                  //   final role = result['role'];
-                                  //
-                                  //   if (role == 'admin') {
-                                  //     Navigator.pushAndRemoveUntil(
-                                  //       context,
-                                  //       MaterialPageRoute(
-                                  //         builder: (_) => const AdminMainHome(),
-                                  //       ),
-                                  //           (route) => false,
-                                  //     );
-                                  //   } else {
-                                  //     Navigator.pushAndRemoveUntil(
-                                  //       context,
-                                  //       MaterialPageRoute(
-                                  //         builder: (_) => const MainScreen(),
-                                  //       ),
-                                  //           (route) => false,
-                                  //     );
-                                  //   }
-                                  // }
                                 } on FirebaseAuthException catch (e) {
                                   setState(() {
                                     if (e.code == 'user-not-found') {

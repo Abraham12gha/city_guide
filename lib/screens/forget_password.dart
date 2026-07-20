@@ -49,12 +49,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
 
             SizedBox(height: height * 0.06),
 
-            // TextFormField(
-            //   decoration: InputDecoration(
-            //     labelText: "E-mail",
-            //     prefixIcon: Icon(Icons.mail),
-            //   ),
-            //),
             TextFormField(
               controller: _emailController,
               decoration: InputDecoration(

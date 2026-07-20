@@ -228,66 +228,6 @@ class _AddCitiesState extends State<AddCities> {
                     borderRadius: BorderRadius.circular(12),
                   ),
 
-                  // child: const Column(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     Icon(
-                  //       Icons.cloud_upload_outlined,
-                  //       size: 50,
-                  //       color: Colors.black87,
-                  //     ),
-                  //     SizedBox(height: 12),
-                  //     Text(
-                  //       'Upload an image',
-                  //       style: TextStyle(
-                  //         fontSize: 16,
-                  //         fontWeight: FontWeight.w600,
-                  //       ),
-                  //     ),
-                  //     SizedBox(height: 4),
-                  //     Text(
-                  //       'PNG, JPG up to 5MB',
-                  //       style: TextStyle(
-                  //         color: Colors.grey,
-                  //       ),
-                  //     ),
-                  //   ],
-
-                  // child: selectedImage != null
-                  //     ? ClipRRect(
-                  //   borderRadius: BorderRadius.circular(12),
-                  //   child: Image.file(
-                  //     selectedImage!,
-                  //     width: double.infinity,
-                  //     height: double.infinity,
-                  //     fit: BoxFit.cover,
-                  //   ),
-                  // )
-                  //     : const Column(
-                  //   mainAxisAlignment: MainAxisAlignment.center,
-                  //   children: [
-                  //     Icon(
-                  //       Icons.cloud_upload_outlined,
-                  //       size: 50,
-                  //       color: Colors.black87,
-                  //     ),
-                  //     SizedBox(height: 12),
-                  //     Text(
-                  //       'Upload an image',
-                  //       style: TextStyle(
-                  //         fontSize: 16,
-                  //         fontWeight: FontWeight.w600,
-                  //       ),
-                  //     ),
-                  //     SizedBox(height: 4),
-                  //     Text(
-                  //       'PNG, JPG up to 5MB',
-                  //       style: TextStyle(
-                  //         color: Colors.grey,
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
                   child: selectedImage != null
                       ? ClipRRect(
                           borderRadius: BorderRadius.circular(12),

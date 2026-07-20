@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../admin_app/models/attraction_model.dart';
 
 class GeminiService {
-  static const String apiKey = 'AQ.Ab8RN6KW2NnCvM0dm82DH8peO92xSuC9E8-cBYCuN-PUNoBysA';
+  static const String apiKey = 'YOUR_API_KEY';
 
   // Change model if needed
   static const String model = 'gemini-2.5-flash';

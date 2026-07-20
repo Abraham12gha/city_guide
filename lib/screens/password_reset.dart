@@ -1,8 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
-import '../services/auth.dart';
 import 'login_screen.dart';
 
 class PasswordReset extends StatelessWidget {

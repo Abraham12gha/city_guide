@@ -8,21 +8,6 @@ import 'notification_service.dart';
 
 class Auth {
   final _authService = FirebaseAuth.instance;
-
-  // //signup
-  // Future<User?> signup(String email, String password) async {
-  //   try {
-  //     final userCred = await _authService.createUserWithEmailAndPassword(
-  //       email: email,
-  //       password: password,
-  //     );
-  //     return userCred.user;
-  //   } on FirebaseAuthException{
-  //     rethrow;
-  //   }
-  // }
-
-
   Future<User?> signup(
       String firstName,
       String lastName,
@@ -57,18 +42,6 @@ class Auth {
     }
   }
 
-  // // login
-  // Future<User?> login(String email, String password) async {
-  //   try {
-  //     final userCred = await _authService.signInWithEmailAndPassword(
-  //       email: email,
-  //       password: password,
-  //     );
-  //     return userCred.user;
-  //   } on FirebaseAuthException{
-  //     rethrow;
-  //   }
-  // }
 
   Future<Map<String, dynamic>?> login(
       String email,

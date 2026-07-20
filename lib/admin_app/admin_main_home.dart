@@ -1,8 +1,5 @@
 import 'package:city_guide/admin_app/list_cities.dart';
 import 'package:flutter/material.dart';
-import 'add_attractions.dart';
-import 'add_catgory.dart';
-import 'add_cities.dart';
 import 'admin_bottomNavigationBar.dart';
 import 'admin_home_screen.dart';
 import 'admin_appbar.dart';
