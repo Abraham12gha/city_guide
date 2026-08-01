@@ -1,5 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:city_guide/screens/app_screen/attraction_detail.dart';
+import 'package:city_guide/screens/app_screen/see_all_recommendations.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shimmer/shimmer.dart';
@@ -1043,9 +1044,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       "Recommendation",
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text(
-                      "See all",
-                      style: TextStyle(color: Colors.grey.shade500),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => SeeAllRecommendations()));
+                      },
+                      child: Text(
+                        "See all",
+                        style: TextStyle(color: Colors.grey.shade500),
+                      ),
                     ),
                   ],
                 ),

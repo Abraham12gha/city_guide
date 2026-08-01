@@ -1,0 +1,706 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+
+class SeeAllRecommendations extends StatefulWidget {
+  const SeeAllRecommendations({super.key});
+
+  @override
+  State<SeeAllRecommendations> createState() => _SeeAllRecommendationsState();
+}
+
+class _SeeAllRecommendationsState extends State<SeeAllRecommendations> {
+  final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+
+  List<DocumentSnapshot> attractions = [];
+
+  DocumentSnapshot? lastDocument;
+
+  bool isLoading = false;
+  bool hasMore = true;
+
+  static const int firstLoad = 8;
+  static const int nextLoad = 6;
+
+  String searchText = "";
+
+  String? city;
+  String? selectedCategory;
+  double? minRating;
+  bool favoritesOnly = false;
+
+  void _showFilterSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+      ),
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 30),
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 5,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      const Text(
+                        "Filters",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+
+                      const SizedBox(height: 25),
+
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("cities")
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const CircularProgressIndicator();
+                          }
+
+                          return DropdownButtonFormField<String>(
+                            value: city,
+                            decoration: InputDecoration(
+                              labelText: "City",
+                              prefixIcon: const Icon(
+                                Icons.location_on_outlined,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            items: snapshot.data!.docs.map((doc) {
+                              return DropdownMenuItem<String>(
+                                value: doc["name"],
+                                child: Text(doc["name"]),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setModalState(() {
+                                city = value;
+                              });
+                            },
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 18),
+
+                      StreamBuilder<QuerySnapshot>(
+                        stream: FirebaseFirestore.instance
+                            .collection("categories")
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (!snapshot.hasData) {
+                            return const CircularProgressIndicator();
+                          }
+
+                          return DropdownButtonFormField<String>(
+                            value: selectedCategory,
+                            decoration: InputDecoration(
+                              labelText: "Category",
+                              prefixIcon: const Icon(Icons.category_outlined),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                            ),
+                            items: snapshot.data!.docs.map((doc) {
+                              return DropdownMenuItem<String>(
+                                value: doc["name"],
+                                child: Text(doc["name"]),
+                              );
+                            }).toList(),
+                            onChanged: (value) {
+                              setModalState(() {
+                                selectedCategory = value;
+                              });
+                            },
+                          );
+                        },
+                      ),
+
+                      const SizedBox(height: 18),
+
+                      DropdownButtonFormField<double>(
+                        value: minRating,
+                        decoration: InputDecoration(
+                          labelText: "Minimum Rating",
+                          prefixIcon: const Icon(Icons.star_outline),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 3, child: Text("3+ Stars")),
+
+                          DropdownMenuItem(value: 4, child: Text("4+ Stars")),
+
+                          DropdownMenuItem(
+                            value: 4.5,
+                            child: Text("4.5+ Stars"),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setModalState(() {
+                            minRating = value;
+                          });
+                        },
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 15,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.favorite, color: Colors.red),
+
+                            const SizedBox(width: 12),
+
+                            const Expanded(
+                              child: Text(
+                                "Favorites Only",
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ),
+
+                            Switch(
+                              activeColor: const Color(0xff14B8A6),
+                              value: favoritesOnly,
+                              onChanged: (value) {
+                                setModalState(() {
+                                  favoritesOnly = value;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      const SizedBox(height: 25),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () {
+                                setState(() {
+                                  city = null;
+                                  selectedCategory = null;
+                                  minRating = null;
+                                  favoritesOnly = false;
+                                });
+
+                                Navigator.pop(context);
+                              },
+                              style: OutlinedButton.styleFrom(
+                                minimumSize: const Size(0, 55),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                              child: const Text("Reset"),
+                            ),
+                          ),
+
+                          const SizedBox(width: 15),
+
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () {
+                                setState(() {});
+
+                                Navigator.pop(context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xff14B8A6),
+                                foregroundColor: Colors.white,
+                                minimumSize: const Size(0, 55),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(15),
+                                ),
+                              ),
+                              child: const Text("Apply"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> loadAttractions({bool firstTime = false}) async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    Query query = FirebaseFirestore.instance
+        .collection("attractions")
+        .orderBy("name");
+
+    if (firstTime) {
+      query = query.limit(firstLoad);
+    } else {
+      if (lastDocument == null) return;
+
+      query = query.startAfterDocument(lastDocument!).limit(nextLoad);
+    }
+
+    final snapshot = await query.get();
+
+    if (snapshot.docs.isNotEmpty) {
+      lastDocument = snapshot.docs.last;
+
+      attractions.addAll(snapshot.docs);
+    }
+
+    if (snapshot.docs.length < (firstTime ? firstLoad : nextLoad)) {
+      hasMore = false;
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    loadAttractions(firstTime: true);
+
+    _scrollController.addListener(() {
+      if (_scrollController.position.pixels >=
+              _scrollController.position.maxScrollExtent - 100 &&
+          !isLoading &&
+          hasMore) {
+        loadAttractions();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+
+        elevation: 0,
+
+        scrolledUnderElevation: 0,
+
+        centerTitle: true,
+
+        title: const Text(
+          "Recommendations",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            // Row(
+            //   children: [
+            //
+            //     Expanded(
+            //       child: Container(
+            //         decoration: BoxDecoration(
+            //           color: Colors.grey.shade100,
+            //           borderRadius: BorderRadius.circular(16),
+            //         ),
+            //         child: TextField(
+            //
+            //           controller: _searchController,
+            //
+            //           decoration: InputDecoration(
+            //
+            //             hintText: "Search attractions...",
+            //
+            //             prefixIcon: const Icon(Icons.search),
+            //
+            //             border: InputBorder.none,
+            //
+            //             contentPadding: const EdgeInsets.symmetric(
+            //               vertical: 15,
+            //             ),
+            //
+            //           ),
+            //
+            //           onChanged: (value) {
+            //             setState(() {
+            //               searchText = value;
+            //             });
+            //           },
+            //
+            //         ),
+            //       ),
+            //     ),
+            //
+            //     const SizedBox(width: 12),
+            //
+            //     InkWell(
+            //
+            //       borderRadius: BorderRadius.circular(16),
+            //
+            //       onTap: _showFilterSheet,
+            //
+            //       child: Container(
+            //
+            //         width: 56,
+            //
+            //         height: 56,
+            //
+            //         decoration: BoxDecoration(
+            //
+            //           color: const Color(0xff14B8A6),
+            //
+            //           borderRadius: BorderRadius.circular(16),
+            //
+            //         ),
+            //
+            //         child: const Icon(
+            //
+            //           Icons.tune_rounded,
+            //
+            //           color: Colors.white,
+            //
+            //         ),
+            //
+            //       ),
+            //
+            //     ),
+            //
+            //   ],
+            // ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+
+                    onChanged: (value) {
+                      setState(() {
+                        searchText = value;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      hintText: "Search attractions...",
+                      hintStyle: TextStyle(color: Colors.grey.shade500),
+                      prefixIcon: const Icon(Icons.search),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade300,
+                          width: 1.5,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: BorderSide(
+                          color: Colors.grey.shade300,
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                        borderSide: const BorderSide(
+                          color: Color(0xFF14B8A6),
+                          width: 1.8,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: _showFilterSheet,
+                  child: Container(
+                    height: 48,
+                    width: 48,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: Colors.grey.shade300,
+                        width: 1.5,
+                      ),
+                    ),
+                    child: Icon(Icons.tune, color: Colors.black),
+                  ),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 20),
+
+            Expanded(
+              child: Builder(
+                builder: (context) {
+                  final filtered = attractions.where((doc) {
+                    final data = doc.data() as Map<String, dynamic>;
+
+                    final name = (data["name"] ?? "").toString().toLowerCase();
+
+                    final cityName = (data["cityName"] ?? "")
+                        .toString()
+                        .toLowerCase();
+
+                    final category = (data["categoryName"] ?? "")
+                        .toString()
+                        .toLowerCase();
+
+                    final description = (data["description"] ?? "")
+                        .toString()
+                        .toLowerCase();
+
+                    final rating = ((data["averageRating"] ?? 0) as num)
+                        .toDouble();
+
+                    final query = searchText.toLowerCase();
+
+                    final matchesSearch =
+                        query.isEmpty ||
+                        name.contains(query) ||
+                        cityName.contains(query) ||
+                        category.contains(query) ||
+                        description.contains(query);
+
+                    final matchesCity =
+                        city == null || cityName == city!.toLowerCase();
+
+                    final matchesCategory =
+                        selectedCategory == null ||
+                        category == selectedCategory!.toLowerCase();
+
+                    final matchesRating =
+                        minRating == null || rating >= minRating!;
+
+                    return matchesSearch &&
+                        matchesCity &&
+                        matchesCategory &&
+                        matchesRating;
+                  }).toList();
+
+                  if (filtered.isEmpty) {
+                    return const Center(child: Text("No attractions found"));
+                  }
+
+                  return GridView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.only(top: 5),
+                    itemCount: filtered.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 14,
+                          mainAxisSpacing: 14,
+                          childAspectRatio: .72,
+                        ),
+                    itemBuilder: (context, index) {
+                      final attraction = filtered[index];
+
+                      return buildCard(attraction);
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildCard(DocumentSnapshot attraction) {
+    final data = attraction.data() as Map<String, dynamic>;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+
+        borderRadius: BorderRadius.circular(18),
+
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.08),
+
+            blurRadius: 10,
+
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+
+        children: [
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
+
+            child: Image.network(
+              data["imageUrl"],
+
+              height: 130,
+
+              width: double.infinity,
+
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+
+                children: [
+                  Text(
+                    data["name"],
+
+                    maxLines: 1,
+
+                    overflow: TextOverflow.ellipsis,
+
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+
+                      fontSize: 15,
+                    ),
+                  ),
+
+                  const SizedBox(height: 6),
+
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.location_on,
+
+                        color: Colors.red,
+
+                        size: 15,
+                      ),
+
+                      const SizedBox(width: 4),
+
+                      Expanded(
+                        child: Text(
+                          data["cityName"],
+
+                          maxLines: 1,
+
+                          overflow: TextOverflow.ellipsis,
+
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const Spacer(),
+
+                  Row(
+                    children: [
+                      const Icon(Icons.star, size: 16, color: Colors.amber),
+
+                      const SizedBox(width: 4),
+
+                      Text(
+                        "${data["averageRating"]}",
+
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+
+                      const Spacer(),
+
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+
+                        decoration: BoxDecoration(
+                          color: const Color(0xff14B8A6).withOpacity(.12),
+
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+
+                        child: Text(
+                          data["categoryName"],
+
+                          style: const TextStyle(
+                            color: Color(0xff14B8A6),
+
+                            fontSize: 10,
+
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
