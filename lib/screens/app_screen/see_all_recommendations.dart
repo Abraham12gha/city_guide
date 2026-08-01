@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import '../../map/widget/shimmer loading/attraction_card_shimmer.dart';
 
 import '../../services/home_firestore.dart';
 import 'attraction_detail.dart';
@@ -593,11 +594,7 @@ class _SeeAllRecommendationsState extends State<SeeAllRecommendations> {
                   }).toList();
 
                   if (isInitialLoading) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: Color(0xff14B8A6),
-                      ),
-                    );
+                    return const AttractionCardShimmer();
                   }
 
                   if (filtered.isEmpty) {
