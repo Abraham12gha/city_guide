@@ -1,5 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:city_guide/screens/app_screen/attraction_detail.dart';
+import 'package:city_guide/screens/app_screen/see_all_attraction.dart';
+import 'package:city_guide/screens/app_screen/see_all_cities.dart';
 import 'package:city_guide/screens/app_screen/see_all_recommendations.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,12 +14,9 @@ class HomeScreen extends StatefulWidget {
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
-
-
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-
   final ScrollController _scrollController = ScrollController();
 
   List<QueryDocumentSnapshot> allAttractions = [];
@@ -26,15 +25,13 @@ class _HomeScreenState extends State<HomeScreen> {
   int itemsToShow = 6;
   bool isInitialized = false;
 
-
   void loadMore() {
     if (visibleAttractions.length >= allAttractions.length) return;
 
     setState(() {
       itemsToShow += 4;
 
-      visibleAttractions =
-          allAttractions.take(itemsToShow).toList();
+      visibleAttractions = allAttractions.take(itemsToShow).toList();
     });
   }
 
@@ -52,9 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
         final isPm = timeStr.contains('pm');
         final isAm = timeStr.contains('am');
 
-        timeStr = timeStr
-            .replaceAll('am', '')
-            .replaceAll('pm', '');
+        timeStr = timeStr.replaceAll('am', '').replaceAll('pm', '');
 
         final timeParts = timeStr.split(':');
 
@@ -64,26 +59,19 @@ class _HomeScreenState extends State<HomeScreen> {
         if (isPm && hour != 12) hour += 12;
         if (isAm && hour == 12) hour = 0;
 
-        return TimeOfDay(
-          hour: hour,
-          minute: minute,
-        );
+        return TimeOfDay(hour: hour, minute: minute);
       }
 
       final start = parseTime(parts[0]);
       final end = parseTime(parts[1]);
 
-      final nowMinutes =
-          now.hour * 60 + now.minute;
+      final nowMinutes = now.hour * 60 + now.minute;
 
-      final startMinutes =
-          start.hour * 60 + start.minute;
+      final startMinutes = start.hour * 60 + start.minute;
 
-      final endMinutes =
-          end.hour * 60 + end.minute;
+      final endMinutes = end.hour * 60 + end.minute;
 
-      return nowMinutes >= startMinutes &&
-          nowMinutes <= endMinutes;
+      return nowMinutes >= startMinutes && nowMinutes <= endMinutes;
     } catch (_) {
       return false;
     }
@@ -105,9 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 120,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
             ),
 
@@ -132,7 +118,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
   Widget citySkeletonCard() {
     return Shimmer.fromColors(
       baseColor: Colors.grey.shade300,
@@ -150,9 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 150,
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
               ),
             ),
 
@@ -237,7 +220,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
                 /// IMAGE
                 ClipRRect(
                   borderRadius: const BorderRadius.vertical(
@@ -259,7 +241,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         Text(
                           attraction['name'],
                           maxLines: 1,
@@ -313,9 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Text(
                                 isOpen ? "Open" : "Closed",
                                 style: TextStyle(
-                                  color: isOpen
-                                      ? Colors.green
-                                      : Colors.red,
+                                  color: isOpen ? Colors.green : Colors.red,
                                   fontSize: 11,
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -343,7 +322,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                             ),
-
                           ],
                         ),
                       ],
@@ -357,35 +335,6 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   String? selectedCategoryFilter;
 
@@ -404,14 +353,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
   final TextEditingController _searchController = TextEditingController();
 
-
-
   String searchText = '';
 
   String? selectedCityFilter;
   double? selectedRatingFilter;
   bool showFavoritesOnly = false;
-
 
   // Filter
 
@@ -431,7 +377,6 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-
                   Container(
                     width: 50,
                     height: 3,
@@ -442,14 +387,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
 
-                  SizedBox(height: 10,),
+                  SizedBox(height: 10),
 
                   const Text(
                     "Filters",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
 
                   const SizedBox(height: 20),
@@ -459,7 +401,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         .collection('cities')
                         .snapshots(),
                     builder: (context, snapshot) {
-
                       if (!snapshot.hasData) {
                         return const CircularProgressIndicator();
                       }
@@ -472,9 +413,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         decoration: InputDecoration(
                           labelText: "City",
 
-                          labelStyle: const TextStyle(
-                            color: Colors.black,
-                          ),
+                          labelStyle: const TextStyle(color: Colors.black),
 
                           floatingLabelStyle: const TextStyle(
                             color: Colors.black,
@@ -490,22 +429,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade300,
-                            ),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
 
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade300,
-                            ),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
 
                           focusedBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(12),
-                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                             borderSide: BorderSide(
                               color: Color(0xFF14B8A6),
                               width: 2,
@@ -513,19 +446,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         items: cities.map((doc) {
-
                           return DropdownMenuItem<String>(
                             value: doc['name'],
                             child: Text(doc['name']),
                           );
-
                         }).toList(),
                         onChanged: (value) {
-
                           setModalState(() {
                             selectedCityFilter = value;
                           });
-
                         },
                       );
                     },
@@ -537,7 +466,6 @@ class _HomeScreenState extends State<HomeScreen> {
                         .collection('categories')
                         .snapshots(),
                     builder: (context, snapshot) {
-
                       if (!snapshot.hasData) {
                         return const CircularProgressIndicator();
                       }
@@ -549,9 +477,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         value: selectedCategoryFilter,
                         decoration: InputDecoration(
                           labelText: "Category",
-                          labelStyle: const TextStyle(
-                            color: Colors.black,
-                          ),
+                          labelStyle: const TextStyle(color: Colors.black),
 
                           floatingLabelStyle: const TextStyle(
                             color: Colors.black,
@@ -568,22 +494,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade300,
-                            ),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
 
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(
-                              color: Colors.grey.shade300,
-                            ),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
 
                           focusedBorder: const OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(12),
-                            ),
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
                             borderSide: BorderSide(
                               color: Color(0xFF14B8A6),
                               width: 2,
@@ -591,20 +511,15 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                         items: categories.map((doc) {
-
                           return DropdownMenuItem<String>(
-
                             value: doc['name'],
                             child: Text(doc['name']),
                           );
-
                         }).toList(),
                         onChanged: (value) {
-
                           setModalState(() {
                             selectedCategoryFilter = value;
                           });
-
                         },
                       );
                     },
@@ -615,12 +530,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     dropdownColor: Colors.white,
                     value: selectedRatingFilter,
 
-
                     decoration: InputDecoration(
                       labelText: "Minimum Rating",
-                      labelStyle: const TextStyle(
-                        color: Colors.black,
-                      ),
+                      labelStyle: const TextStyle(color: Colors.black),
 
                       floatingLabelStyle: const TextStyle(
                         color: Colors.black,
@@ -636,31 +548,22 @@ class _HomeScreenState extends State<HomeScreen> {
 
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade300,
-                        ),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
 
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color: Colors.grey.shade300,
-                        ),
+                        borderSide: BorderSide(color: Colors.grey.shade300),
                       ),
 
                       focusedBorder: const OutlineInputBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(12),
-                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
                         borderSide: BorderSide(
                           color: Color(0xFF14B8A6),
                           width: 2,
                         ),
                       ),
                     ),
-
-
-
 
                     items: const [
                       DropdownMenuItem(
@@ -696,7 +599,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             Icon(Icons.star, color: Colors.amber, size: 16),
                             Icon(Icons.star, color: Colors.amber, size: 16),
                             Icon(Icons.star, color: Colors.amber, size: 16),
-                            Icon(Icons.star_half, color: Colors.amber, size: 16),
+                            Icon(
+                              Icons.star_half,
+                              color: Colors.amber,
+                              size: 16,
+                            ),
                             SizedBox(width: 8),
                             Text("4.5+"),
                           ],
@@ -720,14 +627,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(
-                          Icons.favorite,
-                          color: Colors.red,
-                        ),
+                        const Icon(Icons.favorite, color: Colors.red),
                         const SizedBox(width: 10),
-                        const Expanded(
-                          child: Text("Favorites Only"),
-                        ),
+                        const Expanded(child: Text("Favorites Only")),
                         Switch(
                           activeColor: const Color(0xFF14B8A6),
                           value: showFavoritesOnly,
@@ -757,7 +659,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             minRating: selectedRatingFilter,
                             favoritesOnly: showFavoritesOnly,
                             favoriteIds: favoriteIds,
-                          )
+                          ),
                         ),
                       ).then((_) {
                         resetSearchAndFilters();
@@ -782,16 +684,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
-
-
   String selectedCategory = "For you";
 
   HomeFirestore homeFirestore = HomeFirestore();
 
-   Set<String> favoriteIds = {};
-
-
+  Set<String> favoriteIds = {};
 
   @override
   void initState() {
@@ -839,8 +736,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final width = MediaQuery.of(context).size.width;
     final height = MediaQuery.of(context).size.height;
 
-
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: RefreshIndicator(
@@ -878,7 +773,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 minRating: selectedRatingFilter,
                                 favoritesOnly: showFavoritesOnly,
                                 favoriteIds: favoriteIds,
-                              )
+                              ),
                             ),
                           ).then((_) {
                             resetSearchAndFilters();
@@ -890,7 +785,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           prefixIcon: const Icon(Icons.search),
                           filled: true,
                           fillColor: Colors.white,
-                          contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                          contentPadding: const EdgeInsets.symmetric(
+                            vertical: 0,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
@@ -1042,11 +939,19 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     Text(
                       "Recommendation",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => SeeAllRecommendations()));
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SeeAllRecommendations(),
+                          ),
+                        );
                       },
                       child: Text(
                         "See all",
@@ -1057,7 +962,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
 
                 SizedBox(height: height * 0.02),
-
 
                 StreamBuilder<QuerySnapshot>(
                   stream: getAttractions(),
@@ -1092,7 +996,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       height: 260,
                       child: ListView.builder(
                         scrollDirection: Axis.horizontal,
-                        itemCount: attractions.length > 5 ? 5 : attractions.length,
+                        itemCount: attractions.length > 5
+                            ? 5
+                            : attractions.length,
                         itemBuilder: (context, index) {
                           final attraction = attractions[index];
 
@@ -1103,12 +1009,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 MaterialPageRoute(
                                   builder: (_) => AttractionDetail(
                                     attraction: attraction,
-                                    isFavorite: favoriteIds.contains(attraction.id),
+                                    isFavorite: favoriteIds.contains(
+                                      attraction.id,
+                                    ),
                                   ),
                                 ),
                               );
-
-
 
                               if (result != null) {
                                 setState(() {
@@ -1137,7 +1043,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     child: Stack(
                                       children: [
                                         ClipRRect(
-                                          borderRadius: BorderRadius.circular(16),
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
                                           child: Image.network(
                                             attraction['imageUrl'],
                                             height: 160,
@@ -1150,50 +1058,74 @@ class _HomeScreenState extends State<HomeScreen> {
                                           top: 10,
                                           right: 10,
                                           child: GestureDetector(
-                                              onTap: () async {
-                                                final wasFavorite = favoriteIds.contains(attraction.id);
+                                            onTap: () async {
+                                              final wasFavorite = favoriteIds
+                                                  .contains(attraction.id);
 
-                                                // Instant UI update
+                                              // Instant UI update
+                                              setState(() {
+                                                if (wasFavorite) {
+                                                  favoriteIds.remove(
+                                                    attraction.id,
+                                                  );
+                                                } else {
+                                                  favoriteIds.add(
+                                                    attraction.id,
+                                                  );
+                                                }
+                                              });
+
+                                              try {
+                                                if (wasFavorite) {
+                                                  await homeFirestore
+                                                      .removeFromFavorites(
+                                                        attraction.id,
+                                                      );
+                                                } else {
+                                                  await homeFirestore
+                                                      .addToFavorites(
+                                                        attraction.id,
+                                                      );
+                                                }
+                                              } catch (e) {
+                                                // Revert UI if save fails
                                                 setState(() {
                                                   if (wasFavorite) {
-                                                    favoriteIds.remove(attraction.id);
+                                                    favoriteIds.add(
+                                                      attraction.id,
+                                                    );
                                                   } else {
-                                                    favoriteIds.add(attraction.id);
+                                                    favoriteIds.remove(
+                                                      attraction.id,
+                                                    );
                                                   }
                                                 });
-
-                                                try {
-                                                  if (wasFavorite) {
-                                                    await homeFirestore.removeFromFavorites(attraction.id);
-                                                  } else {
-                                                    await homeFirestore.addToFavorites(attraction.id);
-                                                  }
-                                                } catch (e) {
-                                                  // Revert UI if save fails
-                                                  setState(() {
-                                                    if (wasFavorite) {
-                                                      favoriteIds.add(attraction.id);
-                                                    } else {
-                                                      favoriteIds.remove(attraction.id);
-                                                    }
-                                                  });
-                                                }
-                                              },
+                                              }
+                                            },
                                             child: AnimatedSwitcher(
-                                              duration: const Duration(milliseconds: 200),
+                                              duration: const Duration(
+                                                milliseconds: 200,
+                                              ),
                                               child: Container(
-                                                padding: const EdgeInsets.all(8),
+                                                padding: const EdgeInsets.all(
+                                                  8,
+                                                ),
                                                 decoration: BoxDecoration(
-                                                  color: Colors.white.withOpacity(
-                                                    0.9,
-                                                  ),
+                                                  color: Colors.white
+                                                      .withOpacity(0.9),
                                                   shape: BoxShape.circle,
                                                 ),
                                                 child: Icon(
-                                                  favoriteIds.contains(attraction.id)
+                                                  favoriteIds.contains(
+                                                        attraction.id,
+                                                      )
                                                       ? Icons.favorite
                                                       : Icons.favorite_border,
-                                                  key: ValueKey(favoriteIds.contains(attraction.id)),
+                                                  key: ValueKey(
+                                                    favoriteIds.contains(
+                                                      attraction.id,
+                                                    ),
+                                                  ),
                                                   color: Colors.red,
                                                 ),
                                               ),
@@ -1210,10 +1142,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                       vertical: 5,
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-
-
                                         Row(
                                           children: [
                                             Expanded(
@@ -1243,7 +1174,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
                                                 Text(
                                                   "${attraction['averageRating']} (${attraction['totalReviews']})",
-                                                  style: const TextStyle(fontSize: 12),
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                  ),
                                                 ),
                                               ],
                                             ),
@@ -1281,9 +1214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
 
-
-                SizedBox(height: height * 0.02,),
-
+                SizedBox(height: height * 0.02),
 
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -1295,9 +1226,19 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    Text(
-                      "See all",
-                      style: TextStyle(color: Colors.grey),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SeeAllCities(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "See all",
+                        style: TextStyle(color: Colors.grey),
+                      ),
                     ),
                   ],
                 ),
@@ -1323,9 +1264,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     final cities = snapshot.data!.docs;
 
                     if (cities.isEmpty) {
-                      return const Center(
-                        child: Text("No cities found"),
-                      );
+                      return const Center(child: Text("No cities found"));
                     }
 
                     return SizedBox(
@@ -1359,9 +1298,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(height: 8),
 
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
                                   child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
                                         city['name'],
@@ -1370,7 +1312,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                           fontWeight: FontWeight.bold,
                                         ),
                                       ),
-
 
                                       Text(
                                         "Pakistan",
@@ -1386,7 +1327,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(height: 4),
 
                                 Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                  ),
                                   child: Text(
                                     city['description'] ?? '',
                                     maxLines: 2,
@@ -1407,25 +1350,35 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
 
+                SizedBox(height: height * 0.02),
 
-                SizedBox(height: height * 0.02,),
-
-
-                     Row(
-                       mainAxisAlignment: .spaceBetween,
-                       children: [
-                         Text(
-                          "Attractions",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                Row(
+                  mainAxisAlignment: .spaceBetween,
+                  children: [
+                    Text(
+                      "Attractions",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SeeAllAttractions(),
                           ),
-                         ),
-                         Text("See all", style: TextStyle(color: Colors.grey),),
-                       ],
-                     ),
-                SizedBox(height: height * 0.01,),
-
+                        );
+                      },
+                      child: Text(
+                        "See all",
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: height * 0.01),
 
                 StreamBuilder<QuerySnapshot>(
                   stream: FirebaseFirestore.instance
@@ -1433,21 +1386,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       .snapshots(),
 
                   builder: (context, snapshot) {
-
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return skeletonGrid();
                     }
 
                     if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-                      return const Center(
-                        child: Text("No attractions found"),
-                      );
+                      return const Center(child: Text("No attractions found"));
                     }
 
                     return _buildGridView(snapshot.data!.docs);
                   },
                 ),
-
               ],
             ),
           ),
@@ -1513,10 +1462,3 @@ class SliderImageRound extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
