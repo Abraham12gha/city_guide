@@ -4,21 +4,24 @@ import '../../map/widget/shimmer loading/attraction_card_shimmer.dart';
 
 import '../../services/home_firestore.dart';
 import 'attraction_detail.dart';
-import 'city_attractions.dart';
 
-class SeeAllCities extends StatefulWidget {
-  const SeeAllCities({super.key});
+class CityAttractions extends StatefulWidget {
+  final String cityName;
+  const CityAttractions({
+        super.key,
+        required this.cityName,
+  });
 
   @override
-  State<SeeAllCities> createState() => _SeeAllCitiesState();
+  State<CityAttractions> createState() => _CityAttractionsState();
 }
 
-class _SeeAllCitiesState extends State<SeeAllCities> {
+class _CityAttractionsState extends State<CityAttractions> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   HomeFirestore homeFirestore = HomeFirestore();
 
-  List<QueryDocumentSnapshot> cities = [];
+  List<QueryDocumentSnapshot> attractions = [];
 
   QueryDocumentSnapshot? lastDocument;
   bool isInitialLoading = true;
@@ -125,40 +128,40 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
 
                       const SizedBox(height: 25),
 
-                      StreamBuilder<QuerySnapshot>(
-                        stream: FirebaseFirestore.instance
-                            .collection("cities")
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData) {
-                            return const CircularProgressIndicator();
-                          }
-
-                          return DropdownButtonFormField<String>(
-                            value: city,
-                            decoration: InputDecoration(
-                              labelText: "City",
-                              prefixIcon: const Icon(
-                                Icons.location_on_outlined,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                            ),
-                            items: snapshot.data!.docs.map((doc) {
-                              return DropdownMenuItem<String>(
-                                value: doc["name"],
-                                child: Text(doc["name"]),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              setModalState(() {
-                                city = value;
-                              });
-                            },
-                          );
-                        },
-                      ),
+                      // StreamBuilder<QuerySnapshot>(
+                      //   stream: FirebaseFirestore.instance
+                      //       .collection("cities")
+                      //       .snapshots(),
+                      //   builder: (context, snapshot) {
+                      //     if (!snapshot.hasData) {
+                      //       return const CircularProgressIndicator();
+                      //     }
+                      //
+                      //     // return DropdownButtonFormField<String>(
+                      //     //   value: city,
+                      //     //   decoration: InputDecoration(
+                      //     //     labelText: "City",
+                      //     //     prefixIcon: const Icon(
+                      //     //       Icons.location_on_outlined,
+                      //     //     ),
+                      //     //     border: OutlineInputBorder(
+                      //     //       borderRadius: BorderRadius.circular(15),
+                      //     //     ),
+                      //     //   ),
+                      //     //   items: snapshot.data!.docs.map((doc) {
+                      //     //     return DropdownMenuItem<String>(
+                      //     //       value: doc["name"],
+                      //     //       child: Text(doc["name"]),
+                      //     //     );
+                      //     //   }).toList(),
+                      //     //   onChanged: (value) {
+                      //     //     setModalState(() {
+                      //     //       city = value;
+                      //     //     });
+                      //     //   },
+                      //     // );
+                      //   },
+                      // ),
 
                       const SizedBox(height: 18),
 
@@ -327,7 +330,8 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
     });
 
     Query query = FirebaseFirestore.instance
-        .collection("cities")
+        .collection("attractions")
+        .where("cityName", isEqualTo: widget.cityName)
         .orderBy("name");
 
     if (firstTime) {
@@ -343,7 +347,7 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
     if (snapshot.docs.isNotEmpty) {
       lastDocument = snapshot.docs.last;
 
-      cities.addAll(snapshot.docs);
+      attractions.addAll(snapshot.docs);
     }
 
     if (snapshot.docs.length < (firstTime ? firstLoad : nextLoad)) {
@@ -394,9 +398,12 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
 
         centerTitle: true,
 
-        title: const Text(
-          "Cities",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        title: Text(
+          widget.cityName,
+          style: const TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
 
@@ -416,7 +423,7 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
                       });
                     },
                     decoration: InputDecoration(
-                      hintText: "Search Cities...",
+                      hintText: "Search attractions...",
                       hintStyle: TextStyle(color: Colors.grey.shade500),
                       prefixIcon: const Icon(Icons.search),
                       filled: true,
@@ -472,7 +479,7 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
             Expanded(
               child: Builder(
                 builder: (context) {
-                  final filtered = cities.where((doc) {
+                  final filtered = attractions.where((doc) {
                     final data = doc.data() as Map<String, dynamic>;
 
                     final name = (data["name"] ?? "").toString().toLowerCase();
@@ -501,9 +508,6 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
                             category.contains(query) ||
                             description.contains(query);
 
-                    final matchesCity =
-                        city == null || cityName == city!.toLowerCase();
-
                     final matchesCategory =
                         selectedCategory == null ||
                             category == selectedCategory!.toLowerCase();
@@ -515,7 +519,6 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
                         !favoritesOnly || favoriteIds.contains(doc.id);
 
                     return matchesSearch &&
-                        matchesCity &&
                         matchesCategory &&
                         matchesRating &&
                         matchesFavorite;
@@ -528,7 +531,7 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
                   if (filtered.isEmpty) {
                     return const Center(
                       child: Text(
-                        "No city found",
+                        "No attractions found",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -548,9 +551,9 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
                       childAspectRatio: .72,
                     ),
                     itemBuilder: (context, index) {
-                      final cities = filtered[index];
+                      final attraction = filtered[index];
 
-                      return buildCityCard(cities);
+                      return buildCard(attraction);
                     },
                   );
                 },
@@ -561,21 +564,33 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
       ),
     );
   }
-  Widget buildCityCard(QueryDocumentSnapshot city) {
-    final data = city.data() as Map<String, dynamic>;
+
+  Widget buildCard(QueryDocumentSnapshot attraction) {
+    final data = attraction.data() as Map<String, dynamic>;
+
+    final isOpen = isAttractionOpen(data["openingHours"] ?? "");
 
     return GestureDetector(
-      onTap: () {
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => CityAttractions(
-                cityName: data["name"],
-              ),
+      onTap: () async {
+        final result = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AttractionDetail(
+              attraction: attraction as QueryDocumentSnapshot,
+              isFavorite: favoriteIds.contains(attraction.id),
             ),
-          );
-        };
+          ),
+        );
+
+        if (result != null) {
+          setState(() {
+            if (result) {
+              favoriteIds.add(attraction.id);
+            } else {
+              favoriteIds.remove(attraction.id);
+            }
+          });
+        }
       },
       child: Container(
         decoration: BoxDecoration(
@@ -597,15 +612,11 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
                 top: Radius.circular(16),
               ),
               child: AspectRatio(
-                aspectRatio: 1.3,
+                aspectRatio: 1.35,
                 child: Image.network(
                   data["imageUrl"],
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  errorBuilder: (_, __, ___) => Container(
-                    color: Colors.grey.shade200,
-                    child: const Icon(Icons.location_city, size: 40),
-                  ),
                 ),
               ),
             ),
@@ -617,12 +628,84 @@ class _SeeAllCitiesState extends State<SeeAllCities> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      data["name"] ?? "",
+                      data["name"],
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 15,
+                        ),
+                        const SizedBox(width: 4),
+
+                        Text(
+                          data["cityName"],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 15,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${data["averageRating"]}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              "(${data["totalReviews"]})",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isOpen
+                            ? Colors.green.shade50
+                            : Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        isOpen ? "Open Now" : "Closed",
+                        style: TextStyle(
+                          color: isOpen ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                        ),
                       ),
                     ),
                   ],
