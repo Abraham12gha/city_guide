@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../services/home_firestore.dart';
+import 'attraction_detail.dart';
+
 class SeeAllRecommendations extends StatefulWidget {
   const SeeAllRecommendations({super.key});
 
@@ -11,11 +14,13 @@ class SeeAllRecommendations extends StatefulWidget {
 class _SeeAllRecommendationsState extends State<SeeAllRecommendations> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  HomeFirestore homeFirestore = HomeFirestore();
 
-  List<DocumentSnapshot> attractions = [];
+  List<QueryDocumentSnapshot> attractions = [];
 
-  DocumentSnapshot? lastDocument;
-
+  QueryDocumentSnapshot? lastDocument;
+  bool isInitialLoading = true;
+  Set<String> favoriteIds = {};
   bool isLoading = false;
   bool hasMore = true;
 
@@ -28,6 +33,56 @@ class _SeeAllRecommendationsState extends State<SeeAllRecommendations> {
   String? selectedCategory;
   double? minRating;
   bool favoritesOnly = false;
+
+  Future<void> loadFavorites() async {
+    favoriteIds = await homeFirestore.loadFavorites();
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  bool isAttractionOpen(String openingHours) {
+    try {
+      final parts = openingHours.split('-');
+
+      if (parts.length != 2) return false;
+
+      final now = DateTime.now();
+
+      TimeOfDay parseTime(String timeStr) {
+        timeStr = timeStr.trim().toLowerCase();
+
+        final isPm = timeStr.contains('pm');
+        final isAm = timeStr.contains('am');
+
+        timeStr = timeStr.replaceAll('am', '').replaceAll('pm', '');
+
+        final timeParts = timeStr.split(':');
+
+        int hour = int.parse(timeParts[0]);
+        int minute = int.parse(timeParts[1]);
+
+        if (isPm && hour != 12) hour += 12;
+        if (isAm && hour == 12) hour = 0;
+
+        return TimeOfDay(hour: hour, minute: minute);
+      }
+
+      final start = parseTime(parts[0]);
+      final end = parseTime(parts[1]);
+
+      final nowMinutes = now.hour * 60 + now.minute;
+
+      final startMinutes = start.hour * 60 + start.minute;
+
+      final endMinutes = end.hour * 60 + end.minute;
+
+      return nowMinutes >= startMinutes && nowMinutes <= endMinutes;
+    } catch (_) {
+      return false;
+    }
+  }
 
   void _showFilterSheet() {
     showModalBottomSheet(
@@ -295,6 +350,7 @@ class _SeeAllRecommendationsState extends State<SeeAllRecommendations> {
 
     setState(() {
       isLoading = false;
+      isInitialLoading = false;
     });
   }
 
@@ -302,11 +358,12 @@ class _SeeAllRecommendationsState extends State<SeeAllRecommendations> {
   void initState() {
     super.initState();
 
+    loadFavorites();
     loadAttractions(firstTime: true);
 
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
-              _scrollController.position.maxScrollExtent - 100 &&
+          _scrollController.position.maxScrollExtent - 100 &&
           !isLoading &&
           hasMore) {
         loadAttractions();
@@ -525,16 +582,35 @@ class _SeeAllRecommendationsState extends State<SeeAllRecommendations> {
                     final matchesRating =
                         minRating == null || rating >= minRating!;
 
+                    final matchesFavorite =
+                        !favoritesOnly || favoriteIds.contains(doc.id);
+
                     return matchesSearch &&
                         matchesCity &&
                         matchesCategory &&
-                        matchesRating;
+                        matchesRating &&
+                        matchesFavorite;
                   }).toList();
 
-                  if (filtered.isEmpty) {
-                    return const Center(child: Text("No attractions found"));
+                  if (isInitialLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xff14B8A6),
+                      ),
+                    );
                   }
 
+                  if (filtered.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        "No attractions found",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    );
+                  }
                   return GridView.builder(
                     controller: _scrollController,
                     padding: const EdgeInsets.only(top: 5),
@@ -561,145 +637,155 @@ class _SeeAllRecommendationsState extends State<SeeAllRecommendations> {
     );
   }
 
-  Widget buildCard(DocumentSnapshot attraction) {
+  Widget buildCard(QueryDocumentSnapshot attraction) {
     final data = attraction.data() as Map<String, dynamic>;
 
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
+    final isOpen = isAttractionOpen(data["openingHours"] ?? "");
 
-        borderRadius: BorderRadius.circular(18),
-
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(.08),
-
-            blurRadius: 10,
-
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-
-        children: [
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(18)),
-
-            child: Image.network(
-              data["imageUrl"],
-
-              height: 130,
-
-              width: double.infinity,
-
-              fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () async {
+        final result = await Navigator.push<bool>(
+          context,
+          MaterialPageRoute(
+            builder: (_) => AttractionDetail(
+              attraction: attraction as QueryDocumentSnapshot,
+              isFavorite: favoriteIds.contains(attraction.id),
             ),
           ),
+        );
 
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-
-                children: [
-                  Text(
-                    data["name"],
-
-                    maxLines: 1,
-
-                    overflow: TextOverflow.ellipsis,
-
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-
-                      fontSize: 15,
-                    ),
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.location_on,
-
-                        color: Colors.red,
-
-                        size: 15,
-                      ),
-
-                      const SizedBox(width: 4),
-
-                      Expanded(
-                        child: Text(
-                          data["cityName"],
-
-                          maxLines: 1,
-
-                          overflow: TextOverflow.ellipsis,
-
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  const Spacer(),
-
-                  Row(
-                    children: [
-                      const Icon(Icons.star, size: 16, color: Colors.amber),
-
-                      const SizedBox(width: 4),
-
-                      Text(
-                        "${data["averageRating"]}",
-
-                        style: const TextStyle(fontWeight: FontWeight.w600),
-                      ),
-
-                      const Spacer(),
-
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-
-                        decoration: BoxDecoration(
-                          color: const Color(0xff14B8A6).withOpacity(.12),
-
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-
-                        child: Text(
-                          data["categoryName"],
-
-                          style: const TextStyle(
-                            color: Color(0xff14B8A6),
-
-                            fontSize: 10,
-
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+        if (result != null) {
+          setState(() {
+            if (result) {
+              favoriteIds.add(attraction.id);
+            } else {
+              favoriteIds.remove(attraction.id);
+            }
+          });
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(.06),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
+              child: AspectRatio(
+                aspectRatio: 1.35,
+                child: Image.network(
+                  data["imageUrl"],
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
               ),
             ),
-          ),
-        ],
+
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data["name"],
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    const SizedBox(height: 6),
+
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 15,
+                        ),
+                        const SizedBox(width: 4),
+
+                        Text(
+                          data["cityName"],
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.star,
+                              color: Colors.amber,
+                              size: 15,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              "${data["averageRating"]}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                            ),
+                            const SizedBox(width: 3),
+                            Text(
+                              "(${data["totalReviews"]})",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isOpen
+                            ? Colors.green.shade50
+                            : Colors.red.shade50,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        isOpen ? "Open Now" : "Closed",
+                        style: TextStyle(
+                          color: isOpen ? Colors.green : Colors.red,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
