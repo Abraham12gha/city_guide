@@ -1,8 +1,38 @@
 import 'package:city_guide/screens/app_screen/InAppNotification_screen.dart';
 import 'package:flutter/material.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+import 'map/services/location_service.dart';
+
+class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   const CustomAppBar({super.key});
+
+  @override
+  State<CustomAppBar> createState() => _CustomAppBarState();
+  @override
+  Size get preferredSize => const Size.fromHeight(70);
+}
+
+class _CustomAppBarState extends State<CustomAppBar> {
+
+  final LocationService _locationService = LocationService();
+
+  String city = "Getting location...";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCity();
+  }
+
+  Future<void> _loadCity() async {
+    final result = await _locationService.getCurrentCity();
+
+    if (!mounted) return;
+
+    setState(() {
+      city = result ?? "Enable Location";
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +62,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                     Icon(Icons.location_on, size: 16, color: Colors.red),
                     SizedBox(width: 4),
                     Text(
-                      'Karachi, Pakistan',
-                      style: TextStyle(
+                      "${city}",
+                      style: const TextStyle(
                         fontSize: 17,
                         color: Colors.black,
                         fontWeight: FontWeight.w600,

@@ -8,6 +8,7 @@ import 'package:city_guide/screens/app_screen/saved_attraction.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../services/auth.dart';
 import 'InAppNotification_screen.dart';
@@ -172,10 +173,30 @@ class ProfileScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            const Center(
-              child: Text(
-                'City Compass · v1.0.0',
-                style: TextStyle(color: AppColors.textGrey, fontSize: 12),
+            // const Center(
+            //   child: Text(
+            //     'City Compass · v1.0.0',
+            //     style: TextStyle(color: AppColors.textGrey, fontSize: 12),
+            //   ),
+            // ),
+            Center(
+              child: FutureBuilder(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return const SizedBox();
+                  }
+
+                  final package = snapshot.data!;
+
+                  return Text(
+                    "City Compass. v${package.version} | build ${package.buildNumber}",
+                    style: TextStyle(
+                      color: Colors.grey.shade500,
+                      fontSize: 12,
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 12),
