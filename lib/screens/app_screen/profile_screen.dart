@@ -5,6 +5,8 @@ import 'package:city_guide/screens/app_screen/profiles_preferences/edit_profile.
 import 'package:city_guide/screens/app_screen/profiles_preferences/help_support.dart';
 import 'package:city_guide/screens/app_screen/profiles_preferences/privacy_security.dart';
 import 'package:city_guide/screens/app_screen/saved_attraction.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../services/auth.dart';
@@ -212,23 +214,46 @@ class _ProfileHeader extends StatelessWidget {
                 border: Border.all(color: AppColors.divider, width: 2),
               ),
               padding: const EdgeInsets.all(3),
-              child: ClipOval(
-                child: profileImageUrl.isNotEmpty
-                    ? Image.network(profileImageUrl, fit: BoxFit.cover)
-                    : Container(
-                        color: AppColors.primarySoft,
-                        child: Center(
-                          child: Text(
-                            _initials(userName),
-                            style: const TextStyle(
-                              color: AppColors.primary,
-                              fontSize: 28,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+              child: StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection("users")
+                    .doc(FirebaseAuth.instance.currentUser!.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+
+                  if (!snapshot.hasData) {
+                    return const CircularProgressIndicator();
+                  }
+
+                  final data = snapshot.data!.data() as Map<String, dynamic>;
+                  final avatarUrl = data["avatarUrl"] ?? "";
+
+                  if (avatarUrl.isNotEmpty) {
+                    return ClipOval(
+                      child: Image.network(
+                        avatarUrl,
+                        fit: BoxFit.cover,
+                        width: 96,
+                        height: 96,
+                      ),
+                    );
+                  }
+
+                  return Container(
+                    color: AppColors.primarySoft,
+                    child: Center(
+                      child: Text(
+                        _initials(userName),
+                        style: const TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-              ),
+                    ),
+                  );
+                },
+              )
             ),
             Positioned(
               bottom: -2,

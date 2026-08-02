@@ -46,6 +46,17 @@ class HomeFirestore {
 
 
 
+  Future<QueryDocumentSnapshot?> getAttractionById(String id) async {
+    final query = await FirebaseFirestore.instance
+        .collection('attractions')
+        .where(FieldPath.documentId, isEqualTo: id)
+        .limit(1)
+        .get();
+
+    if (query.docs.isEmpty) return null;
+
+    return query.docs.first;
+  }
 
 
 
