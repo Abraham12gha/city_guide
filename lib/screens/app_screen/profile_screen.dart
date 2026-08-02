@@ -1,5 +1,6 @@
 import 'package:city_guide/screens/app_screen/profiles_preferences/About.dart';
 import 'package:city_guide/screens/app_screen/profiles_preferences/Interest_preferences.dart';
+import 'package:city_guide/screens/app_screen/profiles_preferences/avatar_selections.dart';
 import 'package:city_guide/screens/app_screen/profiles_preferences/edit_profile.dart';
 import 'package:city_guide/screens/app_screen/profiles_preferences/help_support.dart';
 import 'package:city_guide/screens/app_screen/profiles_preferences/privacy_security.dart';
@@ -233,7 +234,14 @@ class _ProfileHeader extends StatelessWidget {
               bottom: -2,
               right: -2,
               child: GestureDetector(
-                onTap: onEditPhoto,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const AvatarSelectionScreen(),
+                    ),
+                  );
+                },
                 child: Container(
                   width: 30,
                   height: 30,

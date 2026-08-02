@@ -1,3 +1,4 @@
+import 'package:city_guide/admin_app/avatar_management_screen.dart';
 import 'package:flutter/material.dart';
 import '../../services/auth.dart';
 
@@ -44,6 +45,31 @@ class AdminProfileScreen extends StatelessWidget {
               onEditPhoto: onEditPhoto,
             ),
             const SizedBox(height: 28),
+            _SectionLabel('Preferences'),
+            _SettingsCard(
+              children: [
+                _SettingsTile(
+                  icon: Icons.language_rounded,
+                  label: 'Language',
+                  trailingText: 'English',
+                  onTap: () {},
+                ),
+                _SettingsTile(
+                  icon: Icons.person_add_alt_1,
+                  label: 'Avatars',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AvatarManagementScreen(),
+                      ),
+                    );
+                  },
+                  isLast: true,
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
             _LogoutButton(
               onConfirmedLogout: () async {
                 try {

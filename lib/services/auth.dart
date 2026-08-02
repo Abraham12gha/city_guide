@@ -209,6 +209,41 @@ class Auth {
       rethrow;
     }
   }
+
+
+  // avatar
+
+
+  Future<void> updateUserAvatar(String avatarId) async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+
+    final avatarDoc = await FirebaseFirestore.instance
+        .collection("avatars")
+        .doc(avatarId)
+        .get();
+
+    final avatarUrl = avatarDoc["imageUrl"];
+
+    await FirebaseFirestore.instance
+        .collection("users")
+        .doc(uid)
+        .update({
+      "avatarId": avatarId,
+      "avatarUrl": avatarUrl,
+    });
+  }
+
+  Future<void> removeUserAvatar() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(uid)
+        .update({
+      'avatarId': FieldValue.delete(),
+      'updatedAt': FieldValue.serverTimestamp(),
+    });
+  }
   
 
 
